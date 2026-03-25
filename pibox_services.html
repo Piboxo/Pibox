@@ -1,0 +1,605 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PiBox — Apps & Services</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#080a0e;--surface:#0f1218;--card:#141820;--border:#1e2535;--border2:#2a3347;--accent:#00e5a0;--blue:#0ea5e9;--amber:#f59e0b;--purple:#a78bfa;--text:#eef0f5;--muted:#7a8599;--dim:#3a4459;--red:#f87171}
+html{scroll-behavior:smooth}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:.85rem 2.5rem;background:rgba(8,10,14,.9);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:"DM Mono",monospace;font-size:1.1rem;color:var(--accent)}
+.nav-logo span{color:var(--text)}
+.nav-links{display:flex;gap:1.75rem;list-style:none}
+.nav-links a{font-size:.82rem;color:var(--muted);text-decoration:none;transition:color .2s}
+.nav-links a:hover{color:var(--text)}
+.nav-cta{background:var(--accent);color:#000;font-weight:500;font-size:.82rem;padding:.42rem 1.1rem;border-radius:6px;text-decoration:none}
+
+.page-header{padding:6.5rem 2.5rem 3rem;max-width:1200px;margin:0 auto}
+.eyebrow{font-size:.67rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--accent);margin-bottom:.65rem;display:flex;align-items:center;gap:.5rem}
+.eyebrow::before{content:"";width:18px;height:1px;background:var(--accent)}
+h1{font-family:"Syne",sans-serif;font-size:clamp(2rem,4vw,3rem);font-weight:800;letter-spacing:-1.5px;margin-bottom:.6rem;line-height:1.1}
+.page-sub{font-size:.95rem;color:var(--muted);max-width:580px;line-height:1.75;font-weight:300}
+
+/* TABS */
+.tabs-wrap{border-bottom:1px solid var(--border);padding:0 2.5rem;max-width:1200px;margin:0 auto;display:flex;gap:.25rem}
+.tab{padding:.7rem 1.1rem;font-size:.82rem;font-weight:500;color:var(--muted);background:transparent;border:none;cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:color .2s,border-color .2s;font-family:"DM Sans",sans-serif}
+.tab:hover{color:var(--text)}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* SECTIONS */
+.content{max-width:1200px;margin:0 auto;padding:2.5rem 2.5rem 5rem}
+.tab-section{display:none}
+.tab-section.active{display:block}
+
+/* SCORE BADGE */
+.score{font-family:"DM Mono",monospace;font-size:.72rem;font-weight:500;padding:2px 8px;border-radius:6px;display:inline-flex;align-items:center;gap:.3rem}
+.score-s{background:rgba(0,229,160,.12);border:1px solid rgba(0,229,160,.25);color:var(--accent)} /* stack inclus */
+.score-r{background:rgba(14,165,233,.12);border:1px solid rgba(14,165,233,.25);color:#38bdf8}     /* recommandé */
+.score-t{background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.25);color:#fbbf24}     /* à tester */
+.score-n{background:rgba(167,139,250,.12);border:1px solid rgba(167,139,250,.25);color:var(--purple)} /* non recommandé */
+.score-x{background:rgba(248,113,113,.12);border:1px solid rgba(248,113,113,.25);color:#f87171}   /* éviter */
+
+/* APP CARDS */
+.app-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:1rem;margin-bottom:2.5rem}
+.app-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.35rem;transition:border-color .2s,transform .15s;position:relative}
+.app-card:hover{border-color:var(--border2);transform:translateY(-2px)}
+.app-card.top{border-color:rgba(0,229,160,.28)}
+.app-card-head{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:.85rem}
+.app-name{font-family:"Syne",sans-serif;font-weight:700;font-size:1rem;margin-bottom:.15rem}
+.app-cat{font-size:.68rem;color:var(--muted);font-weight:400}
+.app-earn{text-align:right}
+.app-mo{font-family:"DM Mono",monospace;font-size:1.2rem;font-weight:500;color:var(--accent)}
+.app-day{font-size:.7rem;color:var(--muted);margin-top:.1rem}
+.app-bar-wrap{height:5px;background:var(--surface);border-radius:3px;overflow:hidden;margin-bottom:.85rem}
+.app-bar{height:5px;border-radius:3px}
+.app-meta{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.meta-item{padding:.4rem .55rem;background:var(--surface);border-radius:6px}
+.meta-k{font-size:.63rem;color:var(--dim);text-transform:uppercase;letter-spacing:.5px;margin-bottom:.18rem}
+.meta-v{font-size:.78rem;font-weight:500}
+.app-note{margin-top:.85rem;font-size:.78rem;color:var(--muted);line-height:1.55;border-top:1px solid var(--border);padding-top:.75rem}
+.ref-chip{display:inline-flex;align-items:center;gap:.3rem;font-size:.7rem;padding:2px 8px;border-radius:6px;background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.2);color:#38bdf8;margin-top:.5rem;text-decoration:none;cursor:pointer}
+.ref-chip:hover{background:rgba(14,165,233,.18)}
+.top-badge{position:absolute;top:-9px;left:1rem;background:var(--accent);color:#000;font-size:.6rem;font-weight:700;padding:2px 10px;border-radius:10px;text-transform:uppercase;letter-spacing:.5px}
+
+/* RANK TABLE */
+.rank-table{width:100%;border-collapse:collapse;font-size:.82rem}
+.rank-table th{text-align:left;padding:.6rem .85rem;border-bottom:1px solid var(--border);font-size:.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;background:var(--surface)}
+.rank-table tr:hover td{background:rgba(255,255,255,.015)}
+.rank-table td{padding:.75rem .85rem;border-bottom:1px solid var(--border);vertical-align:middle}
+.rank-table tr:last-child td{border-bottom:none}
+.rn{font-family:"DM Mono",monospace;font-size:.8rem;color:var(--dim);width:32px}
+.rn.top{color:var(--accent)}
+.rv{font-family:"DM Mono",monospace;font-weight:500}
+
+/* CHART */
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1.5rem}
+.chart-t{font-family:"Syne",sans-serif;font-size:.95rem;font-weight:700;margin-bottom:1.1rem}
+
+/* INFO BOXES */
+.info-box{padding:.8rem 1rem;border-radius:8px;font-size:.8rem;line-height:1.6;margin:.7rem 0}
+.info-box strong{font-weight:500;display:block;margin-bottom:.18rem}
+.ib-green{background:rgba(0,229,160,.07);border:1px solid rgba(0,229,160,.2)}
+.ib-green strong{color:var(--accent)}
+.ib-blue{background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.2)}
+.ib-blue strong{color:#38bdf8}
+.ib-amber{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2)}
+.ib-amber strong{color:#fbbf24}
+.ib-red{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2)}
+.ib-red strong{color:#f87171}
+.ib-purple{background:rgba(167,139,250,.07);border:1px solid rgba(167,139,250,.2)}
+.ib-purple strong{color:var(--purple)}
+
+.sec-label{font-size:.67rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--accent);margin-bottom:.8rem;margin-top:2rem;display:flex;align-items:center;gap:.4rem}
+.sec-label::before{content:"";width:14px;height:1px;background:var(--accent)}
+.sec-label:first-child{margin-top:0}
+
+h3{font-family:"Syne",sans-serif;font-size:1.2rem;font-weight:700;margin-bottom:.4rem}
+.sec-lead{font-size:.88rem;color:var(--muted);line-height:1.7;margin-bottom:1.5rem;font-weight:300}
+
+.divider{height:1px;background:var(--border);margin:2.5rem 0}
+
+footer{border-top:1px solid var(--border);padding:2rem;text-align:center;font-size:.71rem;color:var(--dim);line-height:1.9}
+@media(max-width:700px){
+  nav{padding:.85rem 1.25rem}
+  .nav-links{display:none}
+  .content,.page-header{padding-left:1.25rem;padding-right:1.25rem}
+  .tabs-wrap{padding:0 1.25rem;overflow-x:auto}
+  .app-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+<nav>
+  <div class="nav-logo">Pi<span>Box</span></div>
+  <ul class="nav-links">
+    <li><a href="pibox_landing.html">← Accueil</a></li>
+    <li><a href="pibox_guide.html" style="color:var(--accent)">Guide →</a></li>
+  </ul>
+  <a href="pibox_landing.html#cta" class="nav-cta">Commander →</a>
+</nav>
+
+<div class="page-header">
+  <div class="eyebrow">Apps & Services</div>
+  <h1>Classement des apps<br>de revenus passifs</h1>
+  <p class="page-sub">Benchmarks réels sur nœud M710q actif en France. Données croisées avec <a href="https://sharedata.app" style="color:var(--accent)">sharedata.app</a>. Mis à jour : Mars 2026.</p>
+</div>
+
+<div class="tabs-wrap">
+  <button class="tab active" onclick="switchTab('stack')">Stack PiBox</button>
+  <button class="tab" onclick="switchTab('all')">Classement global</button>
+  <button class="tab" onclick="switchTab('categories')">Par catégorie</button>
+  <button class="tab" onclick="switchTab('chart')">Graphiques</button>
+</div>
+
+<div class="content">
+
+<!-- ─── TAB: STACK ─── -->
+<div class="tab-section active" id="tab-stack">
+  <div class="info-box ib-green">
+    <strong>Stack PiBox V1 — configuration pré-installée</strong>
+    5 apps sélectionnées sur la base de nos benchmarks mensuels. Sélection critères : revenus/mois, stabilité, compatibilité multi-app, IP résidentielle France.
+  </div>
+
+  <div class="app-grid" style="margin-top:1.5rem">
+
+    <div class="app-card top">
+      <div class="top-badge">#1 top earner</div>
+      <div class="app-card-head">
+        <div>
+          <div class="app-name">Salad.io</div>
+          <div class="app-cat">Partage de bande passante</div>
+        </div>
+        <div class="app-earn">
+          <div class="app-mo">19.50€</div>
+          <div class="app-day">0.650€/jour</div>
+          <span class="score score-s">Stack inclus</span>
+        </div>
+      </div>
+      <div class="app-bar-wrap"><div class="app-bar" style="width:64.5%;background:#00e5a0"></div></div>
+      <div class="app-meta">
+        <div class="meta-item"><div class="meta-k">Paiement</div><div class="meta-v">Crypto / Steam</div></div>
+        <div class="meta-item"><div class="meta-k">Région FR</div><div class="meta-v" style="color:var(--accent)">Excellent</div></div>
+        <div class="meta-item"><div class="meta-k">Stabilité</div><div class="meta-v" style="color:var(--accent)">Très haute</div></div>
+        <div class="meta-item"><div class="meta-k">Conflit apps</div><div class="meta-v" style="color:var(--accent)">Aucun</div></div>
+      </div>
+      <div class="app-note">Leader incontesté en France sur IP résidentielle. Priorité bandwidth très bien valorisée. Compatible GPU (non utilisé sur M710q) et CPU/bandwidth. Plateforme mature, paiements fiables.</div>
+      <a class="ref-chip" href="https://salad.com" target="_blank">🔗 salad.com — lien referral disponible</a>
+    </div>
+
+    <div class="app-card top">
+      <div class="top-badge">#2</div>
+      <div class="app-card-head">
+        <div>
+          <div class="app-name">earn.app</div>
+          <div class="app-cat">Partage de bande passante</div>
+        </div>
+        <div class="app-earn">
+          <div class="app-mo">6.00€</div>
+          <div class="app-day">0.200€/jour</div>
+          <span class="score score-s">Stack inclus</span>
+        </div>
+      </div>
+      <div class="app-bar-wrap"><div class="app-bar" style="width:19.9%;background:#00e5a0"></div></div>
+      <div class="app-meta">
+        <div class="meta-item"><div class="meta-k">Paiement</div><div class="meta-v">PayPal / Crypto</div></div>
+        <div class="meta-item"><div class="meta-k">Région FR</div><div class="meta-v" style="color:var(--accent)">Très bon</div></div>
+        <div class="meta-item"><div class="meta-k">Stabilité</div><div class="meta-v" style="color:var(--accent)">Haute</div></div>
+        <div class="meta-item"><div class="meta-k">Conflit apps</div><div class="meta-v" style="color:#fbbf24">Léger</div></div>
+      </div>
+      <div class="app-note">Deuxième meilleur earner sur notre nœud. Bonne valorisation des IPs résidentielles françaises. Légère compétition de bande passante avec Honeygain — les deux restent rentables ensemble.</div>
+      <a class="ref-chip" href="https://earn.app" target="_blank">🔗 earn.app — lien referral disponible</a>
+    </div>
+
+    <div class="app-card top">
+      <div class="top-badge">#3</div>
+      <div class="app-card-head">
+        <div>
+          <div class="app-name">Honeygain</div>
+          <div class="app-cat">Partage de bande passante</div>
+        </div>
+        <div class="app-earn">
+          <div class="app-mo">4.50€</div>
+          <div class="app-day">0.150€/jour</div>
+          <span class="score score-s">Stack inclus</span>
+        </div>
+      </div>
+      <div class="app-bar-wrap"><div class="app-bar" style="width:14.9%;background:#00e5a0"></div></div>
+      <div class="app-meta">
+        <div class="meta-item"><div class="meta-k">Paiement</div><div class="meta-v">PayPal / Crypto</div></div>
+        <div class="meta-item"><div class="meta-k">Région FR</div><div class="meta-v" style="color:var(--accent)">Bon</div></div>
+        <div class="meta-item"><div class="meta-k">Stabilité</div><div class="meta-v" style="color:var(--accent)">Très haute</div></div>
+        <div class="meta-item"><div class="meta-k">Conflit apps</div><div class="meta-v" style="color:#fbbf24">Léger</div></div>
+      </div>
+      <div class="app-note">Plateforme historique et très fiable. Légèrement en dessous d'earn.app sur notre nœud mais très stable. Les deux s'utilisent ensemble sans problème majeur — légère compétition de bande passante.</div>
+      <a class="ref-chip" href="https://honeygain.com" target="_blank">🔗 honeygain.com — lien referral disponible</a>
+    </div>
+
+    <div class="app-card">
+      <div class="app-card-head">
+        <div>
+          <div class="app-name">MystNodes</div>
+          <div class="app-cat">Routage VPN décentralisé</div>
+        </div>
+        <div class="app-earn">
+          <div class="app-mo" style="font-size:.95rem">0.18€ → 0.95€</div>
+          <div class="app-day">croissance avec uptime</div>
+          <span class="score score-s">Stack inclus</span>
+        </div>
+      </div>
+      <div class="app-bar-wrap"><div class="app-bar" style="width:.6%;background:#a78bfa"></div></div>
+      <div class="app-meta">
+        <div class="meta-item"><div class="meta-k">Paiement</div><div class="meta-v">MYST token</div></div>
+        <div class="meta-item"><div class="meta-k">Région FR</div><div class="meta-v" style="color:#fbbf24">Variable</div></div>
+        <div class="meta-item"><div class="meta-k">Stabilité</div><div class="meta-v" style="color:var(--purple)">Croît avec uptime</div></div>
+        <div class="meta-item"><div class="meta-k">Conflit apps</div><div class="meta-v" style="color:var(--accent)">Aucun</div></div>
+      </div>
+      <div class="app-note">Différent des apps bandwidth — utilise le CPU/réseau pour le routage VPN résidentiel. Faible au départ mais croît avec la réputation du nœud. Activer UPnP ou ouvrir le port 4449 pour maximiser les gains.</div>
+      <a class="ref-chip" href="https://mystnodes.com" target="_blank">🔗 mystnodes.com — lien referral disponible</a>
+    </div>
+
+    <div class="app-card">
+      <div class="app-card-head">
+        <div>
+          <div class="app-name">bitping</div>
+          <div class="app-cat">Sonde de latence réseau</div>
+        </div>
+        <div class="app-earn">
+          <div class="app-mo" style="font-size:.95rem">0.03€ → 0.06€</div>
+          <div class="app-day">bonus fiabilité uptime</div>
+          <span class="score score-s">Stack inclus</span>
+        </div>
+      </div>
+      <div class="app-bar-wrap"><div class="app-bar" style="width:.1%;background:#f59e0b"></div></div>
+      <div class="app-meta">
+        <div class="meta-item"><div class="meta-k">Paiement</div><div class="meta-v">Crypto</div></div>
+        <div class="meta-item"><div class="meta-k">Traffic utilisé</div><div class="meta-v" style="color:var(--accent)">Minimal</div></div>
+        <div class="meta-item"><div class="meta-k">Stabilité</div><div class="meta-v" style="color:var(--accent)">Très haute</div></div>
+        <div class="meta-item"><div class="meta-k">Conflit apps</div><div class="meta-v" style="color:var(--accent)">Aucun</div></div>
+      </div>
+      <div class="app-note">Probing de latence réseau — quasi-aucun impact sur la bande passante. Revenus marginaux mais constants. Bonus uptime : les nœuds stables 24/7 reçoivent plus de jobs. Revenu qui croît légèrement avec la réputation.</div>
+      <a class="ref-chip" href="https://bitping.com" target="_blank">🔗 bitping.com — lien referral disponible</a>
+    </div>
+
+  </div>
+
+  <div class="info-box ib-blue">
+    <strong>Liens referral — optionnel mais apprécié</strong>
+    Utiliser nos liens referral lors de votre inscription vous donne souvent un bonus de démarrage (quelques euros offerts selon les plateformes) et nous aide à financer nos benchmarks. Ce n'est pas obligatoire — vous pouvez créer vos comptes directement sur les sites officiels. Les revenus vont toujours intégralement sur votre compte.
+  </div>
+</div>
+
+<!-- ─── TAB: ALL ─── -->
+<div class="tab-section" id="tab-all">
+  <h3 style="margin-bottom:.4rem">Classement global — toutes apps testées</h3>
+  <p class="sec-lead">Revenus estimés sur nœud M710q, IP résidentielle France. Sources : mesures directes + sharedata.app.</p>
+
+  <div class="chart-card">
+    <div class="chart-t">Revenus mensuels estimés — comparatif toutes apps</div>
+    <div style="position:relative;width:100%;height:420px"><canvas id="allBar"></canvas></div>
+  </div>
+
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;overflow:hidden">
+    <table class="rank-table">
+      <thead>
+        <tr>
+          <th style="width:36px">#</th>
+          <th>Application</th>
+          <th>Catégorie</th>
+          <th style="text-align:right">Mois estimé</th>
+          <th style="text-align:right">Paiement</th>
+          <th>Statut</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="rn top">1</td>
+          <td><strong>Salad.io</strong></td>
+          <td><span style="font-size:.72rem;color:var(--muted)">Bandwidth sharing</span></td>
+          <td class="rv" style="text-align:right;color:var(--accent)">19.50€</td>
+          <td style="text-align:right;font-size:.78rem">Crypto/Steam</td>
+          <td><span class="score score-s">Stack inclus</span></td>
+        </tr>
+        <tr>
+          <td class="rn top">2</td>
+          <td><strong>earn.app</strong></td>
+          <td><span style="font-size:.72rem;color:var(--muted)">Bandwidth sharing</span></td>
+          <td class="rv" style="text-align:right;color:var(--accent)">6.00€</td>
+          <td style="text-align:right;font-size:.78rem">PayPal/Crypto</td>
+          <td><span class="score score-s">Stack inclus</span></td>
+        </tr>
+        <tr>
+          <td class="rn top">3</td>
+          <td><strong>Honeygain</strong></td>
+          <td><span style="font-size:.72rem;color:var(--muted)">Bandwidth sharing</span></td>
+          <td class="rv" style="text-align:right;color:var(--accent)">4.50€</td>
+          <td style="text-align:right;font-size:.78rem">PayPal/Crypto</td>
+          <td><span class="score score-s">Stack inclus</span></td>
+        </tr>
+        <tr>
+          <td class="rn">4</td>
+          <td><strong>Repocket</strong></td>
+          <td><span style="font-size:.72rem;color:var(--muted)">Bandwidth sharing</span></td>
+          <td class="rv" style="text-align:right;color:#38bdf8">~1.50€ brut</td>
+          <td style="text-align:right;font-size:.78rem">PayPal/Crypto</td>
+          <td><span class="score score-r">Recommandé test</span></td>
+        </tr>
+        <tr>
+          <td class="rn">5</td>
+          <td><strong>Traffmonetizer</strong></td>
+          <td><span style="font-size:.72rem;color:var(--muted)">Bandwidth sharing</span></td>
+          <td class="rv" style="text-align:right;color:#38bdf8">~1.20€ brut</td>
+          <td style="text-align:right;font-size:.78rem">TM Credits/Crypto</td>
+          <td><span class="score score-r">Fallback Repocket</span></td>
+        </tr>
+        <tr>
+          <td class="rn">6</td>
+          <td><strong>MystNodes</strong></td>
+          <td><span style="font-size:.72rem;color:var(--muted)">VPN routing</span></td>
+          <td class="rv" style="text-align:right;color:var(--purple)">0.18€ → 0.95€</td>
+          <td style="text-align:right;font-size:.78rem">MYST token</td>
+          <td><span class="score score-s">Stack inclus</span></td>
+        </tr>
+        <tr>
+          <td class="rn">7</td>
+          <td><strong>Storj</strong> <span style="font-size:.7rem;color:var(--muted)">(V2 only)</span></td>
+          <td><span style="font-size:.72rem;color:var(--muted)">Stockage décentralisé</span></td>
+          <td class="rv" style="text-align:right;color:#38bdf8">~5.00€</td>
+          <td style="text-align:right;font-size:.78rem">STORJ token</td>
+          <td><span class="score score-r">PiBox V2</span></td>
+        </tr>
+        <tr>
+          <td class="rn">8</td>
+          <td><strong>bitping</strong></td>
+          <td><span style="font-size:.72rem;color:var(--muted)">Network probing</span></td>
+          <td class="rv" style="text-align:right;color:#f59e0b">0.03€ → 0.06€</td>
+          <td style="text-align:right;font-size:.78rem">Crypto</td>
+          <td><span class="score score-s">Stack inclus</span></td>
+        </tr>
+        <tr>
+          <td class="rn">9</td>
+          <td><strong>Peer2Profit</strong></td>
+          <td><span style="font-size:.72rem;color:var(--muted)">Bandwidth sharing</span></td>
+          <td class="rv" style="text-align:right;color:var(--muted)">~0.80€</td>
+          <td style="text-align:right;font-size:.78rem">Crypto</td>
+          <td><span class="score score-t">À tester</span></td>
+        </tr>
+        <tr>
+          <td class="rn">10</td>
+          <td><strong>PacketStream</strong></td>
+          <td><span style="font-size:.72rem;color:var(--muted)">Bandwidth sharing</span></td>
+          <td class="rv" style="text-align:right;color:var(--muted)">~0.30€</td>
+          <td style="text-align:right;font-size:.78rem">PayPal</td>
+          <td><span class="score score-n">Non prioritaire</span></td>
+        </tr>
+        <tr>
+          <td class="rn">—</td>
+          <td><strong>Grass</strong></td>
+          <td><span style="font-size:.72rem;color:var(--muted)">Bandwidth / airdrop</span></td>
+          <td class="rv" style="text-align:right;color:#f87171">Airdrop instable</td>
+          <td style="text-align:right;font-size:.78rem">Token (airdrop)</td>
+          <td><span class="score score-x">Non recommandé</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="info-box ib-amber" style="margin-top:1.25rem">
+    <strong>Règle d'or : ne pas cumuler Repocket + Traffmonetizer</strong>
+    Ces deux apps font exactement le même travail. Les cumuler divise votre bande passante disponible pour un gain net nul (ou négatif). Testez-les un par un sur 3 semaines, gardez le meilleur.
+  </div>
+</div>
+
+<!-- ─── TAB: CATEGORIES ─── -->
+<div class="tab-section" id="tab-categories">
+
+  <div class="sec-label">Catégorie 1 — Partage de bande passante</div>
+  <h3>Bandwidth sharing</h3>
+  <p class="sec-lead">Applications qui monétisent votre connexion internet en la mettant à disposition d'entreprises (SEO, data scraping, CDN, vérification de prix). C'est la catégorie la plus rémunératrice sur IP résidentielle française.</p>
+  <div class="info-box ib-green">
+    <strong>Règle : 3 apps maximum simultanément</strong>
+    Au-delà, la bande passante disponible par app devient trop fragmentée et les revenus totaux baissent. Notre sélection optimale : Salad + earn.app + Honeygain. Ajout possible : Repocket OU Traffmonetizer (pas les deux).
+  </div>
+
+  <div class="divider"></div>
+  <div class="sec-label">Catégorie 2 — Routage VPN décentralisé</div>
+  <h3>VPN / DePIN routing</h3>
+  <p class="sec-lead">Votre IP résidentielle est utilisée comme nœud de sortie VPN pour les utilisateurs payants du réseau. Revenus croissants avec l'uptime et la qualité de connexion.</p>
+  <div class="app-grid" style="grid-template-columns:1fr">
+    <div class="app-card">
+      <div class="app-card-head">
+        <div><div class="app-name">MystNodes</div><div class="app-cat">VPN routing décentralisé</div></div>
+        <div class="app-earn">
+          <div class="app-mo" style="font-size:.9rem">0.18€ → 0.95€/mois</div>
+          <span class="score score-s">Stack inclus</span>
+        </div>
+      </div>
+      <div class="app-note">Réseau Mysterium. IPs résidentielles valorisées pour contourner les géo-restrictions. Ouvrir le port 4449 ou activer UPnP augmente significativement la visibilité du nœud et donc les revenus. Ne consomme pas de bande passante en concurrence avec les apps bandwidth — utilise un canal réseau différent.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="sec-label">Catégorie 3 — Stockage décentralisé</div>
+  <h3>Decentralized storage</h3>
+  <p class="sec-lead">Louer de l'espace disque sur des réseaux de stockage distribués. Réservé à la V2 (2 To dédiés). Revenus progressifs selon le remplissage du nœud.</p>
+  <div class="app-grid" style="grid-template-columns:1fr">
+    <div class="app-card">
+      <div class="app-card-head">
+        <div><div class="app-name">Storj</div><div class="app-cat">Stockage décentralisé DePIN</div></div>
+        <div class="app-earn">
+          <div class="app-mo">~5.00€/mois</div>
+          <span class="score score-r">PiBox V2</span>
+        </div>
+      </div>
+      <div class="app-note">2 To alloués sur PiBox V2. Revenus en STORJ token. Remplissage progressif sur 3–6 mois (les données arrivent au fil du temps). Estimation conservatrice à ~5€/mois pour un nœud partiellement rempli. Nécessite uptime 24/7 et connexion stable — parfait pour PiBox. Ne consomme pas de bande passante de façon significative.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="sec-label">Catégorie 4 — Network probing</div>
+  <h3>Sondes réseau</h3>
+  <p class="sec-lead">Votre machine effectue des tests de latence et de disponibilité réseau pour le compte d'entreprises (monitoring de CDN, vérification de disponibilité). Trafic minimal, revenu bonus.</p>
+  <div class="app-grid" style="grid-template-columns:1fr">
+    <div class="app-card">
+      <div class="app-card-head">
+        <div><div class="app-name">bitping</div><div class="app-cat">Network latency probing</div></div>
+        <div class="app-earn">
+          <div class="app-mo" style="font-size:.9rem">0.03€ → 0.06€/mois</div>
+          <span class="score score-s">Stack inclus</span>
+        </div>
+      </div>
+      <div class="app-note">Consomme quasi-aucune bande passante — envoie des pings et mesure des temps de réponse. Revenu marginal mais totalement gratuit en termes de ressources. Plus le nœud est stable dans le temps, plus il reçoit de jobs de probing. Bonus fiabilité 24/7.</div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+  <div class="sec-label">⚠ Applications non recommandées</div>
+  <div class="info-box ib-red">
+    <strong>Grass — à éviter</strong>
+    Revenus sous forme d'airdrop de tokens non encore lancés. Pas de garantie de valeur, pas de paiement régulier, modèle économique spéculatif. Nous benchmarkons régulièrement — si la situation change, nous mettrons à jour cette page.
+  </div>
+  <div class="info-box ib-amber">
+    <strong>PacketStream — revenu trop faible</strong>
+    Revenus ~0.30€/mois sur notre nœud. La bande passante consommée retire plus de valeur aux autres apps que ce que PacketStream rapporte. Non inclus dans le stack.
+  </div>
+</div>
+
+<!-- ─── TAB: CHARTS ─── -->
+<div class="tab-section" id="tab-chart">
+  <div class="chart-card">
+    <div class="chart-t">Revenus bruts cumulés sur 12 mois — comparatif V1 stack</div>
+    <div style="position:relative;width:100%;height:280px"><canvas id="lineChart"></canvas></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.25rem">
+    <div class="chart-card">
+      <div class="chart-t">Répartition revenus — stack PiBox V1</div>
+      <div style="position:relative;width:100%;height:260px"><canvas id="pieChart"></canvas></div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-t">ROI comparatif — V1 vs V2 vs V1+Repocket</div>
+      <div style="position:relative;width:100%;height:260px"><canvas id="roiLine"></canvas></div>
+    </div>
+  </div>
+  <div class="info-box ib-purple" style="margin-top:1.25rem">
+    <strong>Sources de données</strong>
+    Benchmarks mesurés sur nœud Lenovo M710q actif, IP résidentielle France (Normandie), mars 2026. Données croisées avec <a href="https://sharedata.app" style="color:var(--purple)">sharedata.app</a> pour validation communautaire. Les résultats varient selon l'opérateur, la région et la qualité IP.
+  </div>
+</div>
+
+</div><!-- /content -->
+
+<footer>
+  PiBox Apps & Services · Benchmark Mars 2026 · <a href="https://sharedata.app" style="color:var(--accent)">sharedata.app</a><br>
+  <a href="pibox_landing.html" style="color:var(--muted)">Accueil</a> · <a href="pibox_guide.html" style="color:var(--muted)">Guide setup</a><br>
+  PiBox n'est pas affilié aux applications tierces mentionnées
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function switchTab(id){
+  document.querySelectorAll('.tab').forEach((t,i)=>{
+    const ids=['stack','all','categories','chart'];
+    t.classList.toggle('active',ids[i]===id);
+  });
+  document.querySelectorAll('.tab-section').forEach(s=>{
+    s.classList.toggle('active',s.id==='tab-'+id);
+  });
+  if(id==='chart') setTimeout(renderCharts,50);
+  if(id==='all') setTimeout(renderAllBar,50);
+}
+
+let chartsRendered=false,allBarRendered=false;
+
+function renderAllBar(){
+  if(allBarRendered)return; allBarRendered=true;
+  const gc='rgba(120,130,155,.1)',tc='#7a8599';
+  new Chart(document.getElementById('allBar'),{
+    type:'bar',
+    data:{
+      labels:['Salad.io','earn.app','Honeygain','Repocket*','Traffmon.*','MystNodes','Storj (V2)','bitping','Peer2Profit','PacketStream'],
+      datasets:[{
+        label:'€/mois',
+        data:[19.50,6.00,4.50,1.50,1.20,0.18,5.00,0.03,0.80,0.30],
+        backgroundColor:['#00e5a0cc','#00e5a099','#00e5a066','#0ea5e9cc','#0ea5e977','#a78bfacc','#38bdf8cc','#f59e0bcc','#fbbf2466','#f8717155'],
+        borderRadius:5,borderSkipped:false
+      }]
+    },
+    options:{
+      indexAxis:'y',responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>c.parsed.x.toFixed(2)+'€/mois'}}},
+      scales:{
+        x:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>v+'€'}},
+        y:{grid:{display:false},ticks:{color:tc,font:{size:11}}}
+      }
+    }
+  });
+}
+
+function renderCharts(){
+  if(chartsRendered)return; chartsRendered=true;
+  const gc='rgba(120,130,155,.1)',tc='#7a8599';
+  const mo12=Array.from({length:12},(_,i)=>i+1);
+
+  new Chart(document.getElementById('lineChart'),{
+    type:'line',
+    data:{
+      labels:mo12.map(m=>'M'+m),
+      datasets:[
+        {label:'Salad',data:mo12.map(m=>19.50*m),borderColor:'#00e5a0',tension:.3,pointRadius:0,fill:false,borderWidth:2},
+        {label:'earn.app',data:mo12.map(m=>6.00*m),borderColor:'#00c27a',tension:.3,pointRadius:0,fill:false,borderWidth:1.5,borderDash:[4,3]},
+        {label:'Honeygain',data:mo12.map(m=>4.50*m),borderColor:'#009960',tension:.3,pointRadius:0,fill:false,borderWidth:1.5,borderDash:[4,3]},
+        {label:'Total stack',data:mo12.map(m=>30.21*m),borderColor:'#f59e0b',tension:.3,pointRadius:0,fill:false,borderWidth:2.5}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,labels:{color:tc,font:{size:10},boxWidth:10}}},
+      scales:{x:{grid:{color:gc},ticks:{color:tc,font:{size:10}}},y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>v+'€'}}}
+    }
+  });
+
+  new Chart(document.getElementById('pieChart'),{
+    type:'doughnut',
+    data:{
+      labels:['Salad.io','earn.app','Honeygain','MystNodes','bitping'],
+      datasets:[{data:[19.50,6.00,4.50,0.18,0.03],backgroundColor:['#00e5a0','#00c27a','#007a50','#a78bfa','#f59e0b'],borderWidth:0,borderRadius:4}]
+    },
+    options:{responsive:true,maintainAspectRatio:false,cutout:'65%',
+      plugins:{legend:{position:'bottom',labels:{color:tc,font:{size:10},boxWidth:10}},
+               tooltip:{callbacks:{label:c=>c.label+': '+c.parsed.toFixed(2)+'€/mois'}}}
+    }
+  });
+
+  const mo24=Array.from({length:24},(_,i)=>i+1);
+  function mG(m){return 0.79*(1-Math.exp(-m/9))}
+  function bG(m){return 0.03*(1-Math.exp(-m/10))}
+  function net(m,ex){return 25.99+mG(m)+bG(m)+(ex||0)}
+  let a1=0,a2=0,a3=0;
+  new Chart(document.getElementById('roiLine'),{
+    type:'line',
+    data:{
+      labels:mo24.map(m=>m===1?'M1':m%6===0?'M'+m:''),
+      datasets:[
+        {label:'V1',data:mo24.map(m=>{a1+=net(m,0);return parseFloat((a1-199).toFixed(2))}),borderColor:'#00e5a0',tension:.4,pointRadius:0,fill:false,borderWidth:2},
+        {label:'V2+Storj',data:mo24.map(m=>{a2+=net(m,5);return parseFloat((a2-279).toFixed(2))}),borderColor:'#0ea5e9',tension:.4,pointRadius:0,fill:false,borderWidth:2,borderDash:[4,3]},
+        {label:'V1+Repocket',data:mo24.map(m=>{a3+=net(m,1.25);return parseFloat((a3-199).toFixed(2))}),borderColor:'#f59e0b',tension:.4,pointRadius:0,fill:false,borderWidth:1.5,borderDash:[5,3]}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,
+      plugins:{legend:{display:true,labels:{color:tc,font:{size:10},boxWidth:10}},
+               tooltip:{callbacks:{label:c=>c.dataset.label+': '+c.parsed.y.toFixed(0)+'€'}}},
+      scales:{
+        x:{grid:{color:gc},ticks:{color:tc,font:{size:10}}},
+        y:{grid:{color:gc},ticks:{color:tc,font:{size:10},callback:v=>v+'€'},
+           title:{display:true,text:'Profit net cumulé',color:tc,font:{size:10}}}
+      }
+    }
+  });
+}
+// Pre-render stack tab chart on load
+setTimeout(()=>{},100);
+</script>
+</body>
+</html>

@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>PiBox — Guide de Setup Client</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Mono:wght@400;500&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#080a0e;--surface:#0f1218;--card:#141820;--border:#1e2535;--border2:#2a3347;
+  --accent:#00e5a0;--blue:#0ea5e9;--amber:#f59e0b;--purple:#a78bfa;
+  --text:#eef0f5;--muted:#7a8599;--dim:#3a4459;--red:#f87171;
+}
+html{scroll-behavior:smooth}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden}
+
+nav{position:fixed;top:0;left:0;right:0;z-index:100;display:flex;align-items:center;justify-content:space-between;padding:1rem 2.5rem;background:rgba(8,10,14,.88);backdrop-filter:blur(18px);border-bottom:1px solid var(--border)}
+.nav-logo{font-family:"DM Mono",monospace;font-size:1.1rem;font-weight:500;color:var(--accent)}
+.nav-logo span{color:var(--text)}
+.nav-back{font-size:.82rem;color:var(--muted);text-decoration:none;border:1px solid var(--border2);padding:.4rem 1rem;border-radius:6px;transition:color .2s,border-color .2s}
+.nav-back:hover{color:var(--text);border-color:var(--muted)}
+
+/* LAYOUT */
+.page{display:grid;grid-template-columns:240px 1fr;min-height:100vh;padding-top:62px}
+
+/* SIDEBAR */
+.sidebar{position:sticky;top:62px;height:calc(100vh - 62px);overflow-y:auto;padding:2rem 1.5rem;border-right:1px solid var(--border);background:var(--surface)}
+.sidebar-title{font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--dim);margin-bottom:1rem;margin-top:1.5rem}
+.sidebar-title:first-child{margin-top:0}
+.sidebar ul{list-style:none}
+.sidebar li{margin-bottom:.15rem}
+.sidebar a{font-size:.8rem;color:var(--muted);text-decoration:none;display:flex;align-items:center;gap:.5rem;padding:.3rem .5rem;border-radius:6px;transition:background .15s,color .15s;line-height:1.4}
+.sidebar a:hover{background:rgba(255,255,255,.04);color:var(--text)}
+.sidebar a.active{background:rgba(0,229,160,.08);color:var(--accent)}
+.step-num{font-family:"DM Mono",monospace;font-size:.65rem;width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-weight:500}
+.s-green{background:rgba(0,229,160,.15);color:var(--accent)}
+.s-blue{background:rgba(14,165,233,.15);color:#38bdf8}
+.s-amber{background:rgba(245,158,11,.15);color:#fbbf24}
+.s-red{background:rgba(248,113,113,.15);color:#f87171}
+.s-purple{background:rgba(167,139,250,.15);color:var(--purple)}
+
+/* MAIN CONTENT */
+.content{padding:3rem 3.5rem 5rem;max-width:780px}
+
+/* PROGRESS BAR */
+.progress-wrap{position:fixed;top:62px;left:0;right:0;height:2px;background:var(--border);z-index:99}
+.progress-bar{height:2px;background:var(--accent);width:0%;transition:width .1s}
+
+h1.page-title{font-family:"Syne",sans-serif;font-size:2.2rem;font-weight:800;letter-spacing:-1px;margin-bottom:.5rem;line-height:1.1}
+.page-sub{font-size:.95rem;color:var(--muted);margin-bottom:2.5rem;font-weight:300;line-height:1.7;max-width:580px}
+
+/* SECTION HEADERS */
+.sec-anchor{padding-top:3rem;margin-bottom:.2rem}
+.sec-eyebrow{font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--accent);margin-bottom:.5rem;display:flex;align-items:center;gap:.4rem}
+.sec-eyebrow::before{content:"";width:16px;height:1px;background:var(--accent)}
+h2.sec-h{font-family:"Syne",sans-serif;font-size:1.5rem;font-weight:700;letter-spacing:-.5px;margin-bottom:.5rem}
+.sec-desc{font-size:.88rem;color:var(--muted);line-height:1.7;margin-bottom:1.5rem;font-weight:300}
+
+/* STEP CARDS */
+.step-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1rem;transition:border-color .2s}
+.step-card:hover{border-color:var(--border2)}
+.step-header{display:flex;align-items:flex-start;gap:.85rem;margin-bottom:.75rem}
+.step-badge{font-family:"DM Mono",monospace;font-size:.72rem;font-weight:500;padding:3px 10px;border-radius:6px;flex-shrink:0;margin-top:1px}
+.pre{background:rgba(0,229,160,.1);border:1px solid rgba(0,229,160,.2);color:var(--accent)}
+.check{background:rgba(14,165,233,.1);border:1px solid rgba(14,165,233,.2);color:#38bdf8}
+.opt{background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.2);color:#fbbf24}
+.warn{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.2);color:#f87171}
+.step-title{font-weight:600;font-size:.95rem;line-height:1.3}
+.step-title small{font-size:.75rem;font-weight:400;color:var(--muted);margin-left:.4rem}
+.step-body{font-size:.83rem;color:var(--muted);line-height:1.65}
+.step-body p{margin-bottom:.5rem}
+.step-body p:last-child{margin-bottom:0}
+
+/* CODE BLOCKS */
+code{font-family:"DM Mono",monospace;font-size:.78rem;background:rgba(0,229,160,.08);border:1px solid rgba(0,229,160,.15);color:var(--accent);padding:1px 6px;border-radius:4px}
+.code-block{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:.9rem 1.1rem;font-family:"DM Mono",monospace;font-size:.78rem;color:#a8b4c8;line-height:1.7;margin:.6rem 0;white-space:pre-wrap;word-break:break-all}
+.code-block .comment{color:var(--dim)}
+.code-block .accent{color:var(--accent)}
+.code-block .key{color:#38bdf8}
+
+/* INFO BOXES */
+.info-box{padding:.85rem 1rem;border-radius:8px;font-size:.82rem;line-height:1.6;margin:.75rem 0}
+.info-box strong{font-weight:500;display:block;margin-bottom:.2rem}
+.ib-green{background:rgba(0,229,160,.07);border:1px solid rgba(0,229,160,.2)}
+.ib-green strong{color:var(--accent)}
+.ib-blue{background:rgba(14,165,233,.07);border:1px solid rgba(14,165,233,.2)}
+.ib-blue strong{color:#38bdf8}
+.ib-amber{background:rgba(245,158,11,.07);border:1px solid rgba(245,158,11,.2)}
+.ib-amber strong{color:#fbbf24}
+.ib-red{background:rgba(248,113,113,.07);border:1px solid rgba(248,113,113,.2)}
+.ib-red strong{color:#f87171}
+
+/* CHECKLIST */
+.checklist{list-style:none;margin:.5rem 0}
+.checklist li{font-size:.83rem;color:var(--muted);padding:.3rem 0;display:flex;align-items:flex-start;gap:.6rem;line-height:1.5}
+.checklist li::before{content:"✓";color:var(--accent);font-weight:700;flex-shrink:0;margin-top:.05rem}
+.checklist li.opt-item::before{content:"◎";color:#fbbf24}
+.checklist li.warn-item::before{content:"!";color:#f87171;font-weight:700}
+
+/* APP PILLS */
+.app-row{display:flex;flex-wrap:wrap;gap:.5rem;margin:.6rem 0}
+.app-pill{display:flex;align-items:center;gap:.4rem;padding:.3rem .75rem;border-radius:8px;border:1px solid var(--border2);font-size:.78rem;font-weight:500;color:var(--muted)}
+.app-pill .dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.ap-green .dot{background:var(--accent)}
+.ap-green{border-color:rgba(0,229,160,.2);color:var(--text)}
+.ap-blue .dot{background:#38bdf8}
+.ap-blue{border-color:rgba(14,165,233,.2);color:var(--text)}
+.ap-purple .dot{background:var(--purple)}
+.ap-purple{border-color:rgba(167,139,250,.2);color:var(--text)}
+.ap-amber .dot{background:#fbbf24}
+.ap-amber{border-color:rgba(245,158,11,.2);color:var(--text)}
+
+/* DIVIDER */
+.div{height:1px;background:var(--border);margin:2.5rem 0}
+
+/* DISCLAIMER BOX */
+.disc{background:rgba(248,113,113,.06);border:1px solid rgba(248,113,113,.2);border-radius:10px;padding:1rem 1.25rem;font-size:.8rem;color:var(--muted);line-height:1.7}
+.disc strong{color:#f87171;font-weight:500}
+
+/* FOOTER */
+footer{border-top:1px solid var(--border);padding:2rem;text-align:center;font-size:.72rem;color:var(--dim);line-height:1.9}
+
+@media(max-width:800px){
+  .page{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .content{padding:2rem 1.25rem 4rem}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-wrap"><div class="progress-bar" id="prog"></div></div>
+
+<nav>
+  <div class="nav-logo">Pi<span>Box</span> <span style="font-size:.75rem;color:var(--muted);margin-left:.5rem">Guide Setup</span></div>
+  <div style="display:flex;gap:.75rem;align-items:center"><a href="pibox_services.html" style="font-size:.82rem;color:var(--muted);text-decoration:none;border:1px solid var(--border2);padding:.35rem .9rem;border-radius:6px;transition:color .2s" onmouseover="this.style.color='#eef0f5'" onmouseout="this.style.color=''">Apps</a><a href="pibox_landing.html" class="nav-back">← Retour</a></div>
+</nav>
+
+<div class="page">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sidebar-title">Démarrage</div>
+  <ul>
+    <li><a href="#bienvenue"><span class="step-num s-green">✦</span>Bienvenue</a></li>
+    <li><a href="#comptes"><span class="step-num s-green">1</span>Créer vos comptes</a></li>
+    <li><a href="#email"><span class="step-num s-green">2</span>Email recommandé</a></li>
+  </ul>
+  <div class="sidebar-title">Configuration réseau</div>
+  <ul>
+    <li><a href="#routeur"><span class="step-num s-blue">3</span>Routeur &amp; IP fixe</a></li>
+    <li><a href="#upnp"><span class="step-num s-blue">4</span>UPnP / ports</a></li>
+  </ul>
+  <div class="sidebar-title">Windows &amp; apps</div>
+  <ul>
+    <li><a href="#startup"><span class="step-num s-amber">5</span>Apps au démarrage</a></li>
+    <li><a href="#priorite"><span class="step-num s-amber">6</span>Priorité processus</a></li>
+    <li><a href="#sommeil"><span class="step-num s-amber">7</span>No sleep confirmé</a></li>
+    <li><a href="#reboot"><span class="step-num s-amber">8</span>Reboot hebdo</a></li>
+  </ul>
+  <div class="sidebar-title">Vérifications</div>
+  <ul>
+    <li><a href="#bios"><span class="step-num s-purple">9</span>BIOS (pré-config)</a></li>
+    <li><a href="#verif"><span class="step-num s-green">10</span>Checklist finale</a></li>
+  </ul>
+  <div class="sidebar-title">Informations</div>
+  <ul>
+    <li><a href="#apps"><span class="step-num s-green">A</span>Apps recommandées</a></li>
+    <li><a href="#legal"><span class="step-num s-red">!</span>Avertissements légaux</a></li>
+  </ul>
+</aside>
+
+<!-- MAIN -->
+<main class="content">
+
+<div id="bienvenue">
+  <h1 class="page-title">Guide de setup<br><span style="color:var(--accent)">PiBox</span></h1>
+  <p class="page-sub">Votre PiBox est pré-configuré — la plupart des réglages sont déjà faits. Ce guide vous explique ce qui a été mis en place, ce que vous pouvez vérifier, personnaliser, et les quelques actions que vous devez faire vous-même (création de comptes, configuration routeur).</p>
+
+  <div class="info-box ib-green">
+    <strong>✓ Déjà configuré sur votre PiBox</strong>
+    BIOS optimisé (virtualisation ON, démarrage rapide, no sleep) · Windows mode haute performance · Apps en démarrage automatique · Priorités processus réglées · Reboot automatique dimanche 23h · Pare-feu ajusté pour les apps
+  </div>
+  <div class="info-box ib-blue">
+    <strong>→ Ce que vous devez faire</strong>
+    Créer vos comptes sur chaque app (avec votre email) · Configurer votre routeur (IP fixe + UPnP) · Connecter vos wallets/paiements sur chaque plateforme
+  </div>
+</div>
+
+<div class="div"></div>
+
+<!-- COMPTES -->
+<div class="sec-anchor" id="comptes">
+  <div class="sec-eyebrow">Étape 1</div>
+  <h2 class="sec-h">Créer vos comptes</h2>
+  <p class="sec-desc">Chaque app nécessite un compte indépendant. Vous gérez vos gains directement sur leurs plateformes — PiBox n'a pas accès à vos comptes.</p>
+
+  <div class="app-row">
+    <span class="app-pill ap-green"><span class="dot"></span>Salad.io</span>
+    <span class="app-pill ap-green"><span class="dot"></span>earn.app</span>
+    <span class="app-pill ap-green"><span class="dot"></span>Honeygain</span>
+    <span class="app-pill ap-purple"><span class="dot"></span>MystNodes</span>
+    <span class="app-pill ap-amber"><span class="dot"></span>bitping</span>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge pre">Requis</span>
+      <div>
+        <div class="step-title">Créer un compte sur chaque application</div>
+      </div>
+    </div>
+    <div class="step-body">
+      <p>Ouvrez chaque application sur votre PiBox. Elles sont déjà installées et se trouvent dans le bureau ou la barre des tâches. Créez un compte via <strong>Sign Up</strong> avec votre email.</p>
+      <p>Une fois connecté, l'app commence automatiquement à gagner. Aucune configuration supplémentaire n'est nécessaire dans l'app elle-même.</p>
+    </div>
+  </div>
+</div>
+
+<!-- EMAIL -->
+<div class="sec-anchor" id="email">
+  <div class="sec-eyebrow">Étape 2</div>
+  <h2 class="sec-h">Email recommandé : ProtonMail</h2>
+  <p class="sec-desc">Utiliser Gmail ou un email courant pour ces apps n'est pas recommandé pour deux raisons : confidentialité et détection de bots.</p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge check">Recommandé</span>
+      <div>
+        <div class="step-title">Créer un compte ProtonMail <small>proton.me — gratuit</small></div>
+      </div>
+    </div>
+    <div class="step-body">
+      <p>Gmail traque l'activité et peut signaler votre compte si des connexions automatiques répétées sont détectées (ce que font les apps de revenus passifs en se connectant à leurs serveurs). Certaines plateformes ont des politiques anti-bot qui peuvent suspendre des comptes Gmail.</p>
+      <p>ProtonMail est chiffré de bout en bout, basé en Suisse, sans tracking publicitaire. Il est considéré comme plus sérieux par les plateformes DePIN/bandwidth.</p>
+      <div class="info-box ib-blue" style="margin-top:.6rem">
+        <strong>→ proton.me</strong>
+        Gratuit, sans pub, sans tracking. Créez un compte dédié à vos apps PiBox (ex: <code>votrenom.pibox@proton.me</code>).
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="div"></div>
+
+<!-- ROUTEUR -->
+<div class="sec-anchor" id="routeur">
+  <div class="sec-eyebrow">Étape 3 — Réseau</div>
+  <h2 class="sec-h">IP fixe locale pour votre PiBox</h2>
+  <p class="sec-desc">Les apps de bande passante fonctionnent mieux avec une IP locale stable. Configurer une IP fixe via votre routeur évite les déconnexions quand le bail DHCP expire.</p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge check">Recommandé</span>
+      <div><div class="step-title">Réserver une IP fixe dans votre routeur (bail DHCP statique)</div></div>
+    </div>
+    <div class="step-body">
+      <p>Cette opération se fait dans l'interface de votre box/routeur — elle est différente selon l'opérateur mais le principe est identique.</p>
+      <p><strong>1. Trouver l'adresse MAC de votre PiBox :</strong></p>
+      <div class="code-block"><span class="comment">// Dans l'invite de commandes Windows (Win+R → cmd) :</span>
+<span class="accent">ipconfig /all</span>
+<span class="comment">// Notez "Adresse physique" de votre carte réseau Ethernet</span>
+<span class="comment">// Format : XX-XX-XX-XX-XX-XX</span></div>
+      <p><strong>2. Dans votre box :</strong> Allez dans <strong>Réseau → DHCP → Baux statiques</strong> (ou similaire). Associez l'adresse MAC de votre PiBox à une IP fixe de votre choix, par exemple <code>192.168.1.50</code>.</p>
+      <p><strong>Opérateurs courants :</strong><br>
+      • Livebox Orange : <code>192.168.1.1</code> → Réseau → Serveur DHCP<br>
+      • Freebox : <code>192.168.1.254</code> → Paramètres DHCP<br>
+      • SFR Box : <code>192.168.1.1</code> → Réseau local → DHCP<br>
+      • Bbox Bouygues : <code>192.168.1.254</code> → Réseau local</p>
+    </div>
+  </div>
+</div>
+
+<!-- UPNP -->
+<div class="sec-anchor" id="upnp">
+  <div class="sec-eyebrow">Étape 4 — Réseau</div>
+  <h2 class="sec-h">UPnP &amp; ouverture de ports</h2>
+  <p class="sec-desc">MystNodes notamment nécessite une connectivité entrante pour fonctionner en tant que nœud VPN résidentiel et être mieux rémunéré.</p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge check">Recommandé</span>
+      <div><div class="step-title">Activer UPnP sur votre routeur</div></div>
+    </div>
+    <div class="step-body">
+      <p>UPnP (Universal Plug and Play) permet aux apps de demander automatiquement l'ouverture des ports dont elles ont besoin. C'est l'option la plus simple.</p>
+      <p>Dans l'interface de votre box, cherchez <strong>UPnP</strong> ou <strong>NAT/PAT</strong> et activez-le. Sur la plupart des boxes françaises il est déjà activé par défaut.</p>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge opt">Optionnel</span>
+      <div><div class="step-title">Ouvrir manuellement le port MystNodes (si UPnP inactif)</div></div>
+    </div>
+    <div class="step-body">
+      <p>Si UPnP est désactivé et que vous souhaitez maximiser les revenus MystNodes, ouvrez le port <code>4449</code> (UDP+TCP) en redirection vers l'IP fixe de votre PiBox.</p>
+      <div class="info-box ib-amber">
+        <strong>Vérifier la connectivité MystNodes</strong>
+        Dans l'app MystNodes → Settings → Node status. Si vous voyez "NAT type: Full cone" ou un score élevé, votre connectivité est bonne. Si "Symmetric NAT", l'UPnP ou l'ouverture de port améliorera vos gains.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="div"></div>
+
+<!-- STARTUP -->
+<div class="sec-anchor" id="startup">
+  <div class="sec-eyebrow">Étape 5 — Windows</div>
+  <h2 class="sec-h">Applications au démarrage automatique</h2>
+  <p class="sec-desc">Déjà configuré sur votre PiBox. Voici comment vérifier et modifier si besoin.</p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge pre">Pré-configuré</span>
+      <div><div class="step-title">Vérifier les apps en démarrage automatique</div></div>
+    </div>
+    <div class="step-body">
+      <p>Ouvrez le Gestionnaire des tâches : <code>Ctrl+Shift+Échap</code> → onglet <strong>Démarrage</strong>.</p>
+      <p>Vous devriez voir toutes les apps PiBox avec le statut <strong>Activé</strong>. Si une app est sur "Désactivé", clic droit → Activer.</p>
+      <div class="info-box ib-green">
+        <strong>Apps qui doivent être "Activé"</strong>
+        Salad · earn.app · Honeygain · MystNode Launcher · bitping
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRIORITÉ -->
+<div class="sec-anchor" id="priorite">
+  <div class="sec-eyebrow">Étape 6 — Windows</div>
+  <h2 class="sec-h">Priorité des processus</h2>
+  <p class="sec-desc">Les apps sont configurées en priorité "Au-dessus de la normale" pour qu'elles ne soient pas throttlées par Windows lors d'une activité sur le PC.</p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge pre">Pré-configuré</span>
+      <div><div class="step-title">Vérifier / modifier la priorité d'un processus</div></div>
+    </div>
+    <div class="step-body">
+      <p>Gestionnaire des tâches → onglet <strong>Détails</strong>. Cherchez le processus de l'app (ex: <code>salad.exe</code>). Clic droit → <strong>Définir la priorité</strong>.</p>
+      <p>La priorité recommandée est <strong>Supérieure à la normale</strong>. Évitez "Temps réel" — cela peut déstabiliser Windows.</p>
+      <div class="info-box ib-amber">
+        <strong>Note</strong>
+        La priorité se remet à "Normal" au redémarrage. C'est pourquoi un script de démarrage est inclus sur votre PiBox pour réappliquer automatiquement les priorités au boot.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- SOMMEIL -->
+<div class="sec-anchor" id="sommeil">
+  <div class="sec-eyebrow">Étape 7 — Windows</div>
+  <h2 class="sec-h">Veille désactivée — vérification</h2>
+  <p class="sec-desc">La mise en veille est désactivée au niveau BIOS et Windows. Voici comment vérifier.</p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge pre">Pré-configuré</span>
+      <div><div class="step-title">Confirmer que la veille est bien désactivée</div></div>
+    </div>
+    <div class="step-body">
+      <p>Panneau de configuration → Options d'alimentation → Modifier les paramètres du mode → <strong>Mettre l'ordinateur en veille : Jamais</strong></p>
+      <p>Ou via PowerShell :</p>
+      <div class="code-block"><span class="comment"># Vérifier le plan actuel</span>
+<span class="accent">powercfg /query SCHEME_CURRENT SUB_SLEEP STANDBYIDLE</span>
+<span class="comment"># La valeur doit être 0x00000000 (jamais)</span>
+
+<span class="comment"># Si besoin de forcer :</span>
+<span class="accent">powercfg /change standby-timeout-ac 0</span>
+<span class="accent">powercfg /change monitor-timeout-ac 0</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- REBOOT -->
+<div class="sec-anchor" id="reboot">
+  <div class="sec-eyebrow">Étape 8 — Windows</div>
+  <h2 class="sec-h">Reboot automatique hebdomadaire</h2>
+  <p class="sec-desc">Un redémarrage est planifié chaque dimanche à 23h. Cela nettoie la mémoire, applique les mises à jour Windows et maintient les apps en bonne santé.</p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge pre">Pré-configuré</span>
+      <div><div class="step-title">Voir la tâche planifiée (Planificateur de tâches)</div></div>
+    </div>
+    <div class="step-body">
+      <p>Ouvrez le <strong>Planificateur de tâches</strong> : Win+R → <code>taskschd.msc</code> → Bibliothèque → cherchez <strong>PiBox_WeeklyReboot</strong>.</p>
+      <p>Vous y verrez le planning configuré (dimanche 23h00).</p>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge opt">Optionnel</span>
+      <div><div class="step-title">Changer l'heure ou le jour du reboot</div></div>
+    </div>
+    <div class="step-body">
+      <p>Dans le Planificateur de tâches, double-cliquez sur <strong>PiBox_WeeklyReboot</strong> → onglet <strong>Déclencheurs</strong> → double-cliquez sur le déclencheur → modifiez le jour et l'heure → OK.</p>
+      <div class="info-box ib-blue">
+        <strong>Recommandation</strong>
+        Choisissez une heure creuse où votre connexion est peu utilisée. 23h en semaine est idéal. Évitez les heures de pointe (18h–22h) — le reboot prend ~2 minutes pendant lesquelles les apps sont hors ligne.
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge opt">Optionnel</span>
+      <div><div class="step-title">Désactiver le reboot automatique</div></div>
+    </div>
+    <div class="step-body">
+      <p>Dans le Planificateur de tâches, clic droit sur <strong>PiBox_WeeklyReboot</strong> → <strong>Désactiver</strong>. Ou supprimer complètement avec Suppr.</p>
+      <div class="info-box ib-amber">
+        <strong>Attention</strong>
+        Sans reboot hebdomadaire, Windows peut accumuler des mises à jour en attente et redémarrer au moment le plus inopportun. Nous recommandons de garder la tâche active ou de planifier vos propres reboots manuels.
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge opt">Optionnel</span>
+      <div><div class="step-title">Créer vous-même la tâche (si supprimée)</div></div>
+    </div>
+    <div class="step-body">
+      <div class="code-block"><span class="comment"># PowerShell en administrateur — crée un reboot chaque dimanche 23h00</span>
+<span class="key">$action</span> = New-ScheduledTaskAction -Execute <span class="accent">"shutdown.exe"</span> -Argument <span class="accent">"/r /f /t 60"</span>
+<span class="key">$trigger</span> = New-ScheduledTaskTrigger -Weekly -DaysOfWeek Sunday -At <span class="accent">"23:00"</span>
+<span class="key">$settings</span> = New-ScheduledTaskSettingsSet -ExecutionTimeLimit (New-TimeSpan -Minutes 5)
+Register-ScheduledTask -TaskName <span class="accent">"PiBox_WeeklyReboot"</span> -Action <span class="key">$action</span> -Trigger <span class="key">$trigger</span> -Settings <span class="key">$settings</span> -RunLevel Highest -Force</div>
+      <p style="margin-top:.5rem">Adaptez <code>Sunday</code> (lundi=Monday, mardi=Tuesday…) et <code>23:00</code> selon vos préférences.</p>
+    </div>
+  </div>
+</div>
+
+<div class="div"></div>
+
+<!-- BIOS -->
+<div class="sec-anchor" id="bios">
+  <div class="sec-eyebrow">Information</div>
+  <h2 class="sec-h">Configuration BIOS (pré-faite)</h2>
+  <p class="sec-desc">Ces réglages ont été effectués avant expédition. Vous n'avez pas besoin d'entrer dans le BIOS sauf en cas de réinitialisation.</p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge pre">Pré-configuré</span>
+      <div><div class="step-title">Ce qui a été configuré dans le BIOS</div></div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li><strong>Virtualisation Intel VT-x</strong> activée — nécessaire pour certaines apps (MystNodes notamment)</li>
+        <li><strong>Wake on LAN</strong> activé — permet le redémarrage à distance si besoin</li>
+        <li><strong>Power On After Power Loss</strong> réglé sur "Power On" — la PiBox redémarre automatiquement après une coupure de courant</li>
+        <li><strong>Fast Boot</strong> activé — démarrage plus rapide</li>
+        <li><strong>Deep Sleep / S3/S4</strong> désactivé — empêche la mise en veille profonde au niveau matériel</li>
+        <li><strong>Démarrage sur secteur</strong> — pas de bouton power nécessaire après coupure EDF</li>
+      </ul>
+      <div class="info-box ib-amber" style="margin-top:.75rem">
+        <strong>Pour accéder au BIOS si besoin</strong>
+        Appuyez sur <code>F1</code> ou <code>Entrée</code> au démarrage du Lenovo (logo noir Lenovo). Mot de passe BIOS : non configuré (sauf mention contraire dans votre colis).
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CHECKLIST -->
+<div class="sec-anchor" id="verif">
+  <div class="sec-eyebrow">Vérification finale</div>
+  <h2 class="sec-h">Checklist de bon fonctionnement</h2>
+  <p class="sec-desc">Après avoir créé vos comptes et configuré votre routeur, vérifiez que tout tourne correctement.</p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge check">À vérifier</span>
+      <div><div class="step-title">Après 30 minutes de fonctionnement</div></div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li>Toutes les apps sont visibles dans la barre des tâches (icônes en bas à droite)</li>
+        <li>Salad.io affiche "Earning" et une bande passante active</li>
+        <li>earn.app affiche un trafic sortant (dashboard en ligne sur earn.app)</li>
+        <li>Honeygain affiche un nœud "Connected" dans son dashboard</li>
+        <li>MystNodes affiche "Running" — vérifiez le statut NAT dans Settings</li>
+        <li>bitping affiche votre nœud comme "Online" sur app.bitping.com</li>
+        <li>Aucun message d'erreur ou de déconnexion répétée</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge opt">Optionnel</span>
+      <div><div class="step-title">Surveiller vos revenus</div></div>
+    </div>
+    <div class="step-body">
+      <p>Chaque app a un dashboard en ligne. Connectez-vous avec votre compte ProtonMail pour suivre vos gains en temps réel depuis n'importe quel appareil.</p>
+      <ul class="checklist">
+        <li class="opt-item">Salad.io → app.salad.io</li>
+        <li class="opt-item">earn.app → earn.app/dashboard</li>
+        <li class="opt-item">Honeygain → dashboard.honeygain.com</li>
+        <li class="opt-item">MystNodes → mystnodes.com</li>
+        <li class="opt-item">bitping → app.bitping.com</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="div"></div>
+
+
+<!-- METAMASK -->
+<div class="sec-anchor" id="metamask">
+  <div class="sec-eyebrow">Étape 3 — Wallet crypto</div>
+  <h2 class="sec-h">Créer un wallet MetaMask</h2>
+  <p class="sec-desc">Plusieurs apps (MystNodes, bitping, Traffmonetizer) paient en crypto. Un wallet MetaMask gratuit vous permet de recevoir ces paiements sans compte exchange.</p>
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge check">Recommandé</span>
+      <div><div class="step-title">Installer MetaMask <small>metamask.io — gratuit</small></div></div>
+    </div>
+    <div class="step-body">
+      <p>MetaMask est le wallet Web3 le plus répandu. Extension Chrome/Firefox/Edge ou app mobile.</p>
+      <p><strong>1.</strong> Allez sur <code>metamask.io</code> (vérifiez l'URL — des faux sites existent).</p>
+      <p><strong>2.</strong> "Download for Chrome" → Ajouter l'extension → Créer un nouveau wallet.</p>
+      <p><strong>3. CRITIQUE :</strong> Notez votre <strong>seed phrase (12 mots) sur papier</strong>. Rangez-la en lieu sûr. Ne la saisissez jamais en ligne.</p>
+      <p><strong>4.</strong> Votre adresse ressemble à : <code>0x1a2b3c...f9e8</code>. C'est cette adresse que vous rentrez dans les apps pour recevoir vos crypto.</p>
+      <div class="info-box ib-red" style="margin-top:.65rem">
+        <strong>Ne partagez jamais votre seed phrase</strong>
+        Ni avec PiBox, ni avec les apps, ni avec personne. Quiconque possède vos 12 mots contrôle votre wallet. Créez un wallet dédié PiBox — pas votre wallet principal.
+      </div>
+      <div class="info-box ib-amber" style="margin-top:.5rem">
+        <strong>Pas d'infos personnelles requises</strong>
+        MetaMask ne demande ni nom, ni adresse, ni identité. Wallet anonyme, lié uniquement à votre seed phrase.
+      </div>
+    </div>
+  </div>
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge opt">Optionnel</span>
+      <div><div class="step-title">Ajouter le réseau Polygon — frais réduits</div></div>
+    </div>
+    <div class="step-body">
+      <p>Certaines apps paient sur Polygon plutôt qu'Ethereum pour économiser les frais. MetaMask → Settings → Networks → Add Network → Add manually :</p>
+      <div class="code-block"><span class="key">Network Name:</span> <span class="accent">Polygon</span>
+<span class="key">RPC URL:</span>      <span class="accent">https://polygon-rpc.com</span>
+<span class="key">Chain ID:</span>     <span class="accent">137</span>
+<span class="key">Symbol:</span>       <span class="accent">MATIC</span>
+<span class="key">Explorer:</span>     <span class="accent">https://polygonscan.com</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- SECURITE -->
+<div class="sec-anchor" id="securite">
+  <div class="sec-eyebrow">Sécurité</div>
+  <h2 class="sec-h">Partage de réseau — ce que vous devez savoir</h2>
+  <p class="sec-desc">PiBox partage votre connexion internet. Voici ce qui se passe réellement, les garanties en place, et les bonnes pratiques.</p>
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge check">À lire</span>
+      <div><div class="step-title">Comment fonctionne le partage réseau</div></div>
+    </div>
+    <div class="step-body">
+      <p>Les apps bandwidth (Salad, earn.app, Honeygain) transmettent du trafic chiffré via votre connexion pour le compte d'entreprises (vérification de prix, SEO, accès géolocalisé à des contenus publics).</p>
+      <p>MystNodes fait de même pour le routage VPN — des utilisateurs du réseau Mysterium accèdent à internet via votre IP résidentielle, de façon chiffrée.</p>
+      <div class="info-box ib-blue" style="margin-top:.65rem">
+        <strong>Chiffrement assuré par les services externes</strong>
+        Le trafic est chiffré de bout en bout par les plateformes. Vous ne routez pas de trafic en clair. Le contenu illégal est contractuellement interdit côté plateforme — PiBox ne porte pas de responsabilité sur l'usage fait de votre bande passante par les clients des plateformes.
+      </div>
+      <div class="info-box ib-amber" style="margin-top:.5rem">
+        <strong>Recommandation : réseau séparé si possible</strong>
+        Si votre routeur supporte un réseau Wi-Fi invité ou VLAN, configurer PiBox dessus isole votre trafic personnel du trafic PiBox. Bonne pratique mais non obligatoire.
+      </div>
+    </div>
+  </div>
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge warn">Important</span>
+      <div><div class="step-title">Minimiser vos informations personnelles</div></div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li>Email dédié ProtonMail — pas votre email principal</li>
+        <li>Username neutre qui ne révèle pas votre identité réelle</li>
+        <li>Wallet MetaMask dédié PiBox — pas votre wallet principal avec des fonds</li>
+        <li>PayPal : seul endroit où vos infos personnelles sont requises — géré directement par PayPal</li>
+        <li class="warn-item">Ne connectez jamais vos wallets principaux aux apps PiBox</li>
+        <li class="warn-item">Ne partagez jamais votre seed phrase MetaMask, même avec le support d'une app</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- REFERRALS -->
+<div class="sec-anchor" id="referrals">
+  <div class="sec-eyebrow">Optionnel — Referrals</div>
+  <h2 class="sec-h">Liens referral — bonus de démarrage</h2>
+  <p class="sec-desc">Utiliser nos liens referral lors de votre inscription vous donne un bonus de démarrage sur certaines apps. Totalement optionnel.</p>
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge opt">Optionnel</span>
+      <div><div class="step-title">Ce que vous gagnez avec un lien referral</div></div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li class="opt-item"><strong>Salad.io :</strong> ~0.50€ crédits offerts à l'inscription</li>
+        <li class="opt-item"><strong>Honeygain :</strong> 5$ crédits offerts à l'inscription</li>
+        <li class="opt-item"><strong>earn.app :</strong> bonus premiers revenus augmentés</li>
+        <li class="opt-item"><strong>MystNodes :</strong> MYST tokens bonus</li>
+        <li class="opt-item"><strong>bitping :</strong> bonus variable selon les périodes</li>
+      </ul>
+      <div class="info-box ib-blue" style="margin-top:.65rem">
+        <strong>Transparence</strong>
+        En utilisant notre lien, nous recevons un petit pourcentage de vos revenus futurs — prélevé côté plateforme, pas sur ce que vous gagnez. Cela finance nos benchmarks mensuels et ce guide. Vos gains restent identiques dans les deux cas. Vous pouvez vous inscrire directement sans referral si vous préférez.
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="div"></div>
+<!-- APPS RECOMMANDÉES -->
+<div class="sec-anchor" id="apps">
+  <div class="sec-eyebrow">Applications</div>
+  <h2 class="sec-h">Apps recommandées &amp; sources de données</h2>
+  <p class="sec-desc">La sélection d'applications installées sur votre PiBox est basée sur nos propres benchmarks mensuels et sur les données communautaires de sharedata.app.</p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge pre">Info</span>
+      <div><div class="step-title">Comment nous sélectionnons les apps</div></div>
+    </div>
+    <div class="step-body">
+      <p>Nous testons chaque application sur un nœud actif en France (IP résidentielle, même configuration que votre PiBox). Nous mesurons les revenus réels sur 30 jours minimum avant d'inclure une app dans la configuration.</p>
+      <p>Nos données sont croisées avec <a href="https://sharedata.app" style="color:var(--accent)">sharedata.app</a>, une communauté indépendante qui agrège les gains réels de milliers de nœuds dans le monde.</p>
+      <div class="info-box ib-green" style="margin-top:.6rem">
+        <strong>Si une meilleure app émerge</strong>
+        Nous publions les mises à jour de configuration sur notre canal (email/page web). Si le classement change significativement, vous serez notifié avec les instructions pour mettre à jour votre stack.
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="step-badge opt">Optionnel</span>
+      <div><div class="step-title">Apps à tester en supplément (non pré-installées)</div></div>
+    </div>
+    <div class="step-body">
+      <p>Ces apps peuvent s'ajouter au stack existant. Testez-les une par une sur 2–3 semaines en surveillant l'impact sur les autres :</p>
+      <div class="app-row">
+        <span class="app-pill ap-blue"><span class="dot"></span>Repocket</span>
+        <span class="app-pill ap-blue"><span class="dot"></span>Traffmonetizer</span>
+        <span class="app-pill ap-amber"><span class="dot"></span>Peer2Profit</span>
+      </div>
+      <p style="margin-top:.5rem">Ne jamais installer Repocket et Traffmonetizer simultanément — ils font le même travail et se cannibalisent.</p>
+    </div>
+  </div>
+</div>
+
+<!-- LEGAL -->
+<div class="sec-anchor" id="legal">
+  <div class="sec-eyebrow">Important</div>
+  <h2 class="sec-h">Avertissements &amp; responsabilités</h2>
+  <p class="sec-desc">Lisez attentivement cette section avant utilisation.</p>
+
+  <div class="disc">
+    <strong>CGU Opérateur / FAI</strong><br>
+    Le partage de bande passante via des applications tierces peut être soumis aux Conditions Générales d'Utilisation de votre fournisseur d'accès internet ou opérateur mobile. PiBox n'est pas responsable de l'interprétation ou de l'application de ces CGU. Il vous appartient de vérifier la conformité avec votre contrat d'abonnement. La plupart des opérateurs français tolèrent cet usage pour un usage personnel et non commercial, mais cette situation peut évoluer.
+  </div>
+
+  <div class="disc" style="margin-top:1rem">
+    <strong>Applications tierces indépendantes</strong><br>
+    Salad.io, earn.app, Honeygain, MystNodes et bitping sont des services tiers totalement indépendants de PiBox. Nous recommandons leur utilisation sur la base de nos tests mais nous ne sommes pas responsables de leurs pratiques, de leurs évolutions tarifaires, de leurs fermetures éventuelles ou de toute modification de leurs conditions de service. Leurs revenus sont versés directement sur vos comptes — PiBox n'a aucun accès à vos gains.
+  </div>
+
+  <div class="disc" style="margin-top:1rem">
+    <strong>Revenus non garantis</strong><br>
+    Les chiffres présentés (1.007€/jour) sont basés sur nos mesures en France avec une IP résidentielle en mars 2026. Ils ne constituent pas une garantie de revenus. Les gains varient selon votre opérateur, votre IP, la demande régionale des apps et l'uptime de votre machine. PiBox ne garantit aucun niveau de revenu.
+  </div>
+</div>
+
+<div class="div"></div>
+<div style="text-align:center;padding:1rem 0">
+  <a href="pibox_landing.html" class="btn-s" style="display:inline-flex;align-items:center;gap:.5rem;padding:.7rem 1.75rem;border-radius:8px;border:1px solid var(--border2);color:var(--text);text-decoration:none;font-size:.88rem;transition:border-color .2s">← Retour au site PiBox</a>
+</div>
+
+</main>
+</div>
+
+<footer>
+  PiBox Setup Guide · Dernière mise à jour : Mars 2026<br>
+  Sources : mesures nœud M710q actif FR · <a href="https://sharedata.app" style="color:var(--accent)">sharedata.app</a><br>
+  PiBox n'est pas affilié aux applications tierces mentionnées
+</footer>
+
+<script>
+// Progress bar
+window.addEventListener('scroll',()=>{
+  const d=document.documentElement;
+  const pct=(d.scrollTop/(d.scrollHeight-d.clientHeight))*100;
+  document.getElementById('prog').style.width=pct+'%';
+});
+
+// Active sidebar link
+const links=document.querySelectorAll('.sidebar a');
+const sections=[...document.querySelectorAll('.sec-anchor,[id]')].filter(el=>el.id);
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      links.forEach(l=>{
+        l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id);
+      });
+    }
+  });
+},{rootMargin:'-20% 0px -70% 0px'});
+sections.forEach(s=>obs.observe(s));
+</script>
+</body>
+</html>
