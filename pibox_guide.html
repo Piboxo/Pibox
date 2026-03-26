@@ -199,7 +199,7 @@ footer{border-top:1px solid var(--border);padding:2rem;text-align:center;font-si
   <div class="app-row">
     <span class="app-pill ap-green"><span class="dot"></span>Salad.io</span>
     <span class="app-pill ap-green"><span class="dot"></span>earn.app</span>
-    <span class="app-pill ap-green"><span class="dot"></span>Honeygain</span>
+    
     <span class="app-pill ap-purple"><span class="dot"></span>MystNodes</span>
     <span class="app-pill ap-amber"><span class="dot"></span>bitping</span>
   </div>
@@ -236,7 +236,7 @@ footer{border-top:1px solid var(--border);padding:2rem;text-align:center;font-si
       <p>ProtonMail est chiffré de bout en bout, basé en Suisse, sans tracking publicitaire. Il est considéré comme plus sérieux par les plateformes DePIN/bandwidth.</p>
       <div class="info-box ib-blue" style="margin-top:.6rem">
         <strong>→ proton.me</strong>
-        Gratuit, sans pub, sans tracking. Créez un compte dédié à vos apps PiBox (ex: <code>votrenom.pibox@proton.me</code>).
+        Gratuit, sans pub, sans tracking. Créez un compte dédié à vos apps PiBox (ex: <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="7e08110a0c1b101113500e171c11063e0e0c110a111050131b">[email&#160;protected]</a></code>).
       </div>
     </div>
   </div>
@@ -322,7 +322,7 @@ footer{border-top:1px solid var(--border);padding:2rem;text-align:center;font-si
       <p>Vous devriez voir toutes les apps PiBox avec le statut <strong>Activé</strong>. Si une app est sur "Désactivé", clic droit → Activer.</p>
       <div class="info-box ib-green">
         <strong>Apps qui doivent être "Activé"</strong>
-        Salad · earn.app · Honeygain · MystNode Launcher · bitping
+        Salad · earn.app · MystNode Launcher · bitping
       </div>
     </div>
   </div>
@@ -391,6 +391,27 @@ footer{border-top:1px solid var(--border);padding:2rem;text-align:center;font-si
       <p>Vous y verrez le planning configuré (dimanche 23h00).</p>
     </div>
   </div>
+
+  <div class="step-card" style="border-color:rgba(251,191,36,.25);background:rgba(251,191,36,.04)">
+    <div class="step-header">
+      <span class="step-badge" style="background:rgba(251,191,36,.15);border:1px solid rgba(251,191,36,.25);color:#fbbf24">Salad.io</span>
+      <div><div class="step-title">&#9888; Salad.io — think twice before rebooting</div></div>
+    </div>
+    <div class="step-body">
+      <p>Salad.io assigns you compute "jobs" — some pay much better than others. If you reboot while running a high-paying job, Salad may take time to assign a new one and your node reputation score can temporarily drop.</p>
+      <p style="margin-top:.5rem"><strong>Recommendation :</strong> If Salad is earning well, <strong>disable the weekly reboot</strong> and only reboot when something is buggy or Windows needs an update.</p>
+      <div class="info-box ib-amber" style="margin-top:.65rem">
+        <strong>To disable the weekly reboot :</strong>
+        Win+R &#8594; <code>taskschd.msc</code> &#8594; Biblioth&#232;que &#8594; find <strong>PiBox_WeeklyReboot</strong> &#8594; right-click &#8594; <strong>D&#233;sactiver</strong>.<br>
+        To re-enable : same steps &#8594; right-click &#8594; <strong>Activer</strong>.<br>
+        The task stays saved and can be toggled at any time.
+      </div>
+      <div class="info-box ib-green" style="margin-top:.5rem">
+        <strong>Good times to reboot :</strong> Apps not responding &#183; Salad stuck "Initializing" 30+ min &#183; Windows update pending &#183; Once a month minimum.
+      </div>
+    </div>
+  </div>
+
 
   <div class="step-card">
     <div class="step-header">
@@ -482,7 +503,7 @@ Register-ScheduledTask -TaskName <span class="accent">"PiBox_WeeklyReboot"</span
         <li>Toutes les apps sont visibles dans la barre des tâches (icônes en bas à droite)</li>
         <li>Salad.io affiche "Earning" et une bande passante active</li>
         <li>earn.app affiche un trafic sortant (dashboard en ligne sur earn.app)</li>
-        <li>Honeygain affiche un nœud "Connected" dans son dashboard</li>
+        
         <li>MystNodes affiche "Running" — vérifiez le statut NAT dans Settings</li>
         <li>bitping affiche votre nœud comme "Online" sur app.bitping.com</li>
         <li>Aucun message d'erreur ou de déconnexion répétée</li>
@@ -500,7 +521,7 @@ Register-ScheduledTask -TaskName <span class="accent">"PiBox_WeeklyReboot"</span
       <ul class="checklist">
         <li class="opt-item">Salad.io → app.salad.io</li>
         <li class="opt-item">earn.app → earn.app/dashboard</li>
-        <li class="opt-item">Honeygain → dashboard.honeygain.com</li>
+        
         <li class="opt-item">MystNodes → mystnodes.com</li>
         <li class="opt-item">bitping → app.bitping.com</li>
       </ul>
@@ -564,7 +585,7 @@ Register-ScheduledTask -TaskName <span class="accent">"PiBox_WeeklyReboot"</span
       <div><div class="step-title">Comment fonctionne le partage réseau</div></div>
     </div>
     <div class="step-body">
-      <p>Les apps bandwidth (Salad, earn.app, Honeygain) transmettent du trafic chiffré via votre connexion pour le compte d'entreprises (vérification de prix, SEO, accès géolocalisé à des contenus publics).</p>
+      <p>Les apps bandwidth (Salad, earn.app) transmettent du trafic chiffré via votre connexion pour le compte d'entreprises (vérification de prix, SEO, accès géolocalisé à des contenus publics).</p>
       <p>MystNodes fait de même pour le routage VPN — des utilisateurs du réseau Mysterium accèdent à internet via votre IP résidentielle, de façon chiffrée.</p>
       <div class="info-box ib-blue" style="margin-top:.65rem">
         <strong>Chiffrement assuré par les services externes</strong>
@@ -607,7 +628,7 @@ Register-ScheduledTask -TaskName <span class="accent">"PiBox_WeeklyReboot"</span
     <div class="step-body">
       <ul class="checklist">
         <li class="opt-item"><strong>Salad.io :</strong> ~0.50€ crédits offerts à l'inscription</li>
-        <li class="opt-item"><strong>Honeygain :</strong> 5$ crédits offerts à l'inscription</li>
+        
         <li class="opt-item"><strong>earn.app :</strong> bonus premiers revenus augmentés</li>
         <li class="opt-item"><strong>MystNodes :</strong> MYST tokens bonus</li>
         <li class="opt-item"><strong>bitping :</strong> bonus variable selon les périodes</li>
@@ -672,7 +693,7 @@ Register-ScheduledTask -TaskName <span class="accent">"PiBox_WeeklyReboot"</span
 
   <div class="disc" style="margin-top:1rem">
     <strong>Applications tierces indépendantes</strong><br>
-    Salad.io, earn.app, Honeygain, MystNodes et bitping sont des services tiers totalement indépendants de PiBox. Nous recommandons leur utilisation sur la base de nos tests mais nous ne sommes pas responsables de leurs pratiques, de leurs évolutions tarifaires, de leurs fermetures éventuelles ou de toute modification de leurs conditions de service. Leurs revenus sont versés directement sur vos comptes — PiBox n'a aucun accès à vos gains.
+    Salad.io, earn.app, MystNodes et bitping sont des services tiers totalement indépendants de PiBox. Nous recommandons leur utilisation sur la base de nos tests mais nous ne sommes pas responsables de leurs pratiques, de leurs évolutions tarifaires, de leurs fermetures éventuelles ou de toute modification de leurs conditions de service. Leurs revenus sont versés directement sur vos comptes — PiBox n'a aucun accès à vos gains.
   </div>
 
   <div class="disc" style="margin-top:1rem">
@@ -695,7 +716,7 @@ Register-ScheduledTask -TaskName <span class="accent">"PiBox_WeeklyReboot"</span
   PiBox n'est pas affilié aux applications tierces mentionnées
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // Progress bar
 window.addEventListener('scroll',()=>{
   const d=document.documentElement;
@@ -708,14 +729,4 @@ const links=document.querySelectorAll('.sidebar a');
 const sections=[...document.querySelectorAll('.sec-anchor,[id]')].filter(el=>el.id);
 const obs=new IntersectionObserver(entries=>{
   entries.forEach(e=>{
-    if(e.isIntersecting){
-      links.forEach(l=>{
-        l.classList.toggle('active',l.getAttribute('href')==='#'+e.target.id);
-      });
-    }
-  });
-},{rootMargin:'-20% 0px -70% 0px'});
-sections.forEach(s=>obs.observe(s));
-</script>
-</body>
-</html>
+    if(e.isInters
