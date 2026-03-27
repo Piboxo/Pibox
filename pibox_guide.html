@@ -141,6 +141,10 @@ footer a{color:var(--acc);text-decoration:none}
     <li><a href="#startup"><span class="snum s-amber">5</span>Auto-start check</a></li>
     <li><a href="#reboot"><span class="snum s-amber">6</span>Weekly reboot</a></li>
   </ul>
+  <div class="sb-section">Reference</div>
+  <ul>
+    <li><a href="#bios"><span class="snum s-purple">i</span>What's pre-configured</a></li>
+  </ul>
   <div class="sb-section">Verify</div>
   <ul>
     <li><a href="#checklist"><span class="snum s-green">7</span>Final checklist</a></li>
@@ -181,10 +185,10 @@ footer a{color:var(--acc);text-decoration:none}
     <div class="step-body">
       <p>Open each app on your PiBox (they're on the desktop or taskbar). Create an account via <strong>Sign Up</strong> with your email. Once logged in, the app starts earning automatically.</p>
       <ul class="checklist">
-        <li>Salad.io → <code>salad.com</code></li>
-        <li>earn.app → <code>earn.app</code></li>
-        <li>MystNodes → <code>mystnodes.com</code></li>
-        <li>bitping → <code>app.bitping.com</code></li>
+        <li><strong>Salad.io</strong> → <a href="https://salad.com" style="color:var(--blue)">salad.com</a> — top earner, bandwidth sharing</li>
+        <li><strong>earn.app</strong> → <a href="https://earnapp.com/i/15nnKkGs" style="color:var(--blue)">earnapp.com/i/15nnKkGs</a> — bandwidth sharing (use our link for bonus)</li>
+        <li><strong>MystNodes</strong> → <a href="https://mystnodes.co/?referral_code=CjgrIrntXwmUGWphfpnz3fTlTNCIEQwBr4D23FIQ" style="color:var(--blue)">mystnodes.co</a> — VPN routing (grows with uptime)</li>
+        <li><strong>bitping</strong> → <a href="https://app.bitping.com" style="color:var(--blue)">app.bitping.com</a> — latency probing, near-zero resources</li>
       </ul>
     </div>
   </div>
@@ -202,7 +206,7 @@ footer a{color:var(--acc);text-decoration:none}
       <div><div class="step-title">Create a ProtonMail email <small>proton.me — free</small></div></div>
     </div>
     <div class="step-body">
-      <p>Use a dedicated ProtonMail address for all your PiBox apps (e.g. <code>yourname.pibox@proton.me</code>). Gmail tracks activity and some platforms flag repeated automated logins as bot behavior — ProtonMail avoids this.</p>
+      <p>Use a dedicated ProtonMail address for all your PiBox apps (e.g. <code><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="61180e14130f000c044f1108030e192111130e150e0f4f0c04">[email&#160;protected]</a></code>). Gmail tracks activity and some platforms flag repeated automated logins as bot behavior — ProtonMail avoids this.</p>
       <div class="info-box ib-blue">
         <strong>→ proton.me</strong>
         Free, end-to-end encrypted, no ads, no tracking. Takes 2 minutes to set up.
@@ -379,6 +383,51 @@ Register-ScheduledTask -TaskName <span class="acc">"PiBox_WeeklyReboot"</span> -
 <div class="divider"></div>
 
 <!-- STEP 7: CHECKLIST -->
+<div class="divider"></div>
+
+<div class="step-anchor" id="bios">
+  <div class="step-eyebrow">Reference</div>
+  <h2>What's pre-configured on your PiBox</h2>
+  <p class="step-desc">These settings are done before shipping. No action needed — just useful to know.</p>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="badge badge-pre">Pre-configured</span>
+      <div><div class="step-title">BIOS (Lenovo ThinkCentre M710q)</div></div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li><strong>Intel VT-x virtualization</strong> — enabled (required for MystNodes)</li>
+        <li><strong>Wake on LAN</strong> — enabled (remote power-on)</li>
+        <li><strong>Power On After Power Loss</strong> → "Power On" — auto-starts after power cut</li>
+        <li><strong>Deep Sleep (S3/S4)</strong> — disabled (no hardware sleep)</li>
+        <li><strong>Fast Boot</strong> — enabled</li>
+      </ul>
+      <div class="info-box ib-amber" style="margin-top:.65rem">
+        <strong>To access BIOS if needed</strong>
+        Press <code>F1</code> at the Lenovo startup screen. No BIOS password set.
+      </div>
+    </div>
+  </div>
+
+  <div class="step-card">
+    <div class="step-header">
+      <span class="badge badge-pre">Pre-configured</span>
+      <div><div class="step-title">Windows settings</div></div>
+    </div>
+    <div class="step-body">
+      <ul class="checklist">
+        <li>All earning apps set to auto-start on Windows boot</li>
+        <li>Power plan: High Performance — no sleep, no screen timeout</li>
+        <li>Weekly reboot scheduled Sunday 11pm (can be disabled for Salad — see Step 6)</li>
+        <li>RustDesk installed for remote desktop access</li>
+        <li>Dashboard auto-start configured (system tray)</li>
+        <li>Firewall rules configured for all earning apps</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
 <div class="step-anchor" id="checklist">
   <div class="step-eyebrow">Verify</div>
   <h2>Final checklist</h2>
@@ -409,12 +458,18 @@ Register-ScheduledTask -TaskName <span class="acc">"PiBox_WeeklyReboot"</span> -
     <div class="step-body">
       <p>Signing up via our referral links usually gives you a starting bonus (a few euros depending on the platform). Totally optional — you can sign up directly on any app's website.</p>
       <ul class="checklist">
-        <li class="opt">Salad.io → <code>salad.com/r/pibox</code></li>
-        <li class="opt">earn.app → <code>earn.app/r/pibox</code></li>
-        <li class="opt">MystNodes → <code>mystnodes.com/r/pibox</code></li>
-        <li class="opt">bitping → <code>bitping.com/r/pibox</code></li>
+        <li class="opt">Salad.io → no referral program</li>
+        <li class="opt">earn.app → <a href="https://earnapp.com/i/15nnKkGs" style="color:var(--blue)">earnapp.com/i/15nnKkGs</a> — bonus at signup</li>
+        <li class="opt">MystNodes → <a href="https://mystnodes.co/?referral_code=CjgrIrntXwmUGWphfpnz3fTlTNCIEQwBr4D23FIQ" style="color:var(--blue)">mystnodes.co</a> — MYST bonus</li>
+        <li class="opt">bitping → no referral program</li>
       </ul>
-      <p style="font-size:.75rem;color:var(--dim);margin-top:.5rem">Replace with your actual referral links from each app's dashboard.</p>
+      <p style="font-size:.75rem;color:var(--dim);margin-top:.5rem">These are our actual referral links. Using them gives you a signup bonus and helps fund our benchmarks.</p>
+      <ul class="checklist" style="margin-top:.5rem">
+        <li class="opt">PacketStream → <a href="https://packetstream.io/?psr=7xID" style="color:var(--blue)">packetstream.io/?psr=7xID</a></li>
+        <li class="opt">Pawns.app → <a href="https://pawns.app/?r=pibox" style="color:var(--blue)">pawns.app/?r=pibox</a></li>
+        <li class="opt">Honeygain → <a href="https://join.honeygain.com/PIBOX0D83D" style="color:var(--blue)">join.honeygain.com/PIBOX0D83D</a> (+$5 bonus)</li>
+        <li class="opt">Traffmonetizer → <a href="https://traffmonetizer.com/?aff=2114483" style="color:var(--blue)">traffmonetizer.com/?aff=2114483</a></li>
+      </ul>
     </div>
   </div>
 </div>
@@ -447,22 +502,12 @@ Register-ScheduledTask -TaskName <span class="acc">"PiBox_WeeklyReboot"</span> -
 
 <footer>
   PiBox Setup Guide · March 2026<br>
-  <a href="index.html">Home</a> · <a href="pibox_services.html">App Rankings</a> · <a href="mailto:piboxv01@proton.me">piboxv01@proton.me</a>
+  <a href="index.html">Home</a> · <a href="pibox_services.html">App Rankings</a> · <a href="/cdn-cgi/l/email-protection#2d5d444f42555b1d1c6d5d5f42594243034048"><span class="__cf_email__" data-cfemail="74041d161b0c0244453404061b001b1a5a1911">[email&#160;protected]</span></a>
 </footer>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 window.addEventListener('scroll',()=>{
   const d=document.documentElement;
   document.getElementById('prog').style.width=(d.scrollTop/(d.scrollHeight-d.clientHeight)*100)+'%';
 });
-const links=document.querySelectorAll('.sidebar a');
-const sections=document.querySelectorAll('.step-anchor,[id]');
-const obs=new IntersectionObserver(e=>{
-  e.forEach(en=>{
-    if(en.isIntersecting) links.forEach(l=>l.classList.toggle('active',l.getAttribute('href')==='#'+en.target.id));
-  });
-},{rootMargin:'-20% 0px -70% 0px'});
-sections.forEach(s=>obs.observe(s));
-</script>
-</body>
-</html>
+const links=document.querySe
